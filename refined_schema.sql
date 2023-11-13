@@ -1,51 +1,42 @@
 CREATE SCHEMA Refined;
 
-CREATE TABLE Refined.Artist (
-    artist_name varchar(100) not null,
-    start_date date,
-    end_date date,
-    active char(1),
-    PRIMARY KEY (artist_name)
-);
+CREATE SEQUENCE Refined.Album_Key_Seq START 1001;
 
-CREATE TABLE Refined.Album (
+CREATE TABLE Refined.Dim_Album (
+	album_key numeric not null,
     album_id varchar(30) not null,
-    album_name varchar(100) not null,
+    album_name varchar(200) not null,
     album_release_date date,
     start_date date,
     end_date date,
     active char(1),
-    PRIMARY KEY (album_id)
+    load_date date,
+    PRIMARY KEY (album_key)
 );
 
-CREATE TABLE Refined.Genre (
-    genre_name varchar(30) not null,
+CREATE SEQUENCE Refined.Playlist_Key_Seq START 2001;
+
+CREATE TABLE Refined.Dim_Playlist (
+	playlist_key numeric not null,
+    playlist_id varchar(200) not null,
+    playlist_name varchar(200) not null,
+    playlist_genre varchar(100) not null,
+    playlist_subgenre varchar(100) not null,
     start_date date,
     end_date date,
     active char(1),
-    PRIMARY KEY (genre_name)
+    load_date date,
+    PRIMARY KEY (playlist_key)
 );
 
-CREATE TABLE Refined.Playlist (
-    playlist_id varchar(30) not null,
-    playlist_name varchar(100) not null,
-    playlist_genre varchar(30) not null,
-    playlist_subgenre varchar(30) not null,
-    start_date date,
-    end_date date,
-    active char(1),
-    PRIMARY KEY (playlist_id),
-    CONSTRAINT FK_Track_Genre FOREIGN KEY (playlist_genre) REFERENCES Refined.Genre (genre_name),
-    CONSTRAINT FK_Track_SubGenre FOREIGN KEY (playlist_subgenre) REFERENCES Refined.Genre (genre_name)
-);
+CREATE SEQUENCE Refined.Track_Key_Seq START 3001;
 
-CREATE TABLE Refined.Track (
+CREATE TABLE Refined.Dim_Track (
+    track_key numeric not null,
     track_id varchar(30) not null,
-    track_name varchar(100) not null,
-    track_artist varchar(100) not null,
+    track_name varchar(200) not null,
+    track_artist varchar(200) not null,
     track_popularity numeric,
-    track_album_id varchar(30),
-    playlist_id varchar(30),
     danceability numeric,
     energy numeric,
     key numeric,
@@ -53,17 +44,38 @@ CREATE TABLE Refined.Track (
     mode numeric(1),
     speechiness numeric,
     acousticness numeric,
-    instrumentalness varchar(10),
+    instrumentalness varchar(50),
     liveness numeric,
     valence numeric,
     tempo numeric,
-    duration_ms numeric(10),
+    duration_ms numeric,
     start_date date,
     end_date date,
     active char(1),
-    PRIMARY KEY (track_id),
-    CONSTRAINT FK_Track_Artist FOREIGN KEY (track_artist) REFERENCES Refined.Artist (artist_name),
-    CONSTRAINT FK_Track_AlbumID FOREIGN KEY (track_album_id) REFERENCES Refined.Album (album_id),
-    CONSTRAINT FK_Track_PlaylistID FOREIGN KEY (playlist_id) REFERENCES Refined.Playlist (playlist_id)
+    load_date date,
+    PRIMARY KEY (track_key)
 );
 
+CREATE SEQUENCE Refined.Date_Key_Seq START 4001;
+
+CREATE TABLE Refined.Dim_Date (
+    date_key numeric not null,
+    date_date date not null,
+    date_day numeric not null,
+    date_month numeric not null,
+    date_year numeric not null,
+    date_name varchar(10) not null,
+    PRIMARY KEY (date_key)
+);
+
+CREATE SEQUENCE Refined.Tracks_Key_Seq START 5001;
+
+CREATE TABLE Refined.Fct_Tracks (
+    track_key numeric not null,
+    album_key numeric not null,
+    playlist_key numeric not null,
+    date_key numeric not null,
+	CONSTRAINT FK_Fct_Track_Album FOREIGN KEY (album_key) REFERENCES Refined.Dim_Album (album_key),
+	CONSTRAINT FK_Fct_Track_Playlist FOREIGN KEY (playlist_key) REFERENCES Refined.Dim_Playlist (playlist_key),
+	CONSTRAINT FK_Fct_Track_Date FOREIGN KEY (date_key) REFERENCES Refined.Dim_Date (date_key)
+); 
