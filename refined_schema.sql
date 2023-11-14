@@ -78,4 +78,5 @@ CREATE TABLE Refined.Fct_Tracks (
 	CONSTRAINT FK_Fct_Track_Album FOREIGN KEY (album_key) REFERENCES Refined.Dim_Album (album_key),
 	CONSTRAINT FK_Fct_Track_Playlist FOREIGN KEY (playlist_key) REFERENCES Refined.Dim_Playlist (playlist_key),
 	CONSTRAINT FK_Fct_Track_Date FOREIGN KEY (date_key) REFERENCES Refined.Dim_Date (date_key)
+    PRIMARY KEY (track_key, album_key, playlist_key, date_key)
 ); 
