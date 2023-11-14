@@ -145,3 +145,34 @@ Dim_Date
 - date_year 
 - date_name 
 ```
+
+### Move data into OLAP database
+
+We have used `etl_raw_to_refined.sql` ETL query to move all the date from Raw schema to Refined schema (i.e OLTP database to OLAP database). All the data will be loaded in above created Dimension tables.
+
+### Identify 5 most frequently asked questions for this dataset
+
+Let's assume these are the top 5 reports that we want to generate on our OLAP database data.
+
+- What are 10 most popular songs in last 6 months ?
+- Who are the 5 most popular artists in last 1 year ?
+- How many albums got released in last 6 months ?
+- Top 10 longest songs ever ?
+- Top 7 Dance tunes of the year ?
+
+Let's design our Fact table to answer these questions. So, we need data from Track, Album, Playlist and Date to answer these questions. Let's load data in Fact table with primary keys from all these dimensions
+
+```
+Fct_Tracks
+- track_key 
+- album_key 
+- playlist_key 
+- date_key
+    [Primary key will be combination of all 4 columns]
+```
+
+![image](./olap_data_model.png)
+
+### Write SQL Queries on OLAP database to answer above questions
+
+To generate above reports, we have developed SQL queries as part of `stats.sql` file.
